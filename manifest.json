@@ -1,0 +1,17 @@
+{
+  "name": "System Quest",
+  "short_name": "System Quest",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#04060d",
+  "theme_color": "#04060d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
