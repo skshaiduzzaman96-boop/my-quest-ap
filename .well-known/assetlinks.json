@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.levelxpathgames.systemquest",
+    "sha256_cert_fingerprints":
+    ["E6:ED:D6:58:47:1A:7A:4D:B6:C9:EF:B4:FA:0F:CA:A6:46:4A:65:3F:F2:A4:2C:8D:29:0D:A9:AF:4F:64:BA:75"]
+  }
+}]
