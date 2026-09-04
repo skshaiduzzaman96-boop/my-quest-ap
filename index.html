@@ -2558,9 +2558,9 @@ function runAnimation(){
   // still be tried end-to-end.
   const AD_DAILY_LIMIT = 10;
   const AD_REWARDS = {
-    core:  { amount:1,  field:'cores',      icon:'💎', label:'1 Dimensional Core',   desc:'Watch a short ad to earn a Dimensional Core.', dailyLimit:1 },
-    shard: { amount:2,  field:'manaShards', icon:'🔷', label:'2 Mana Shards',        desc:'Watch a short ad to earn Mana Shards.' },
-    lucky: { amount:1,  field:'luckyCharges', icon:'🍀', label:'1 Lucky XP charge',  desc:'Watch a short ad to earn a Lucky XP charge (random +5 to +15 XP bonus on your next quest).', dailyLimit:1 }
+    core:  { amount:1,  field:'cores',      icon:'💎', label:'1 Dimensional Core',   desc:'Claim a free Dimensional Core.', dailyLimit:1 },
+    shard: { amount:2,  field:'manaShards', icon:'🔷', label:'2 Mana Shards',        desc:'Claim free Mana Shards.' },
+    lucky: { amount:1,  field:'luckyCharges', icon:'🍀', label:'1 Lucky XP charge',  desc:'Claim a free Lucky XP charge (random +5 to +15 XP bonus on your next quest).', dailyLimit:1 }
   };
   let __adRewardResolve = null;
   window.onAdRewardResult = function(success){
@@ -2586,9 +2586,9 @@ function runAnimation(){
   function simulateAd(resolve){
     const overlay=document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;background:rgba(4,6,13,0.97);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:Orbitron;gap:14px;text-align:center;padding:24px;';
-    overlay.innerHTML = `<div style="font-size:11px;letter-spacing:2px;color:var(--text-dim);">SIMULATED AD — TEST MODE</div>`+
+    overlay.innerHTML = `<div style="font-size:11px;letter-spacing:2px;color:var(--text-dim);">CHARGING REWARD</div>`+
       `<div id="adSimCountdown" style="font-size:52px;color:var(--gold);text-shadow:0 0 16px rgba(255,204,85,0.5);">5</div>`+
-      `<div style="font-size:11px;color:var(--text-dim);max-width:260px;line-height:1.6;">The published app replaces this with a real AdMob rewarded ad.</div>`;
+      `<div style="font-size:11px;color:var(--text-dim);max-width:260px;line-height:1.6;">Please wait while your reward is prepared.</div>`;
     document.body.appendChild(overlay);
     let n=5;
     const cd=overlay.querySelector('#adSimCountdown');
@@ -2613,7 +2613,7 @@ function runAnimation(){
     sfxUIClick();
     const success = await requestRewardedAd(type);
     if(!success){
-      showToast('Ad was skipped or failed to load — no reward given.', 'penalty');
+      showToast('Reward claim was interrupted — no reward given.', 'penalty');
       return;
     }
     const st = adWatchState(type);
@@ -2627,7 +2627,7 @@ function runAnimation(){
         state[cfg.field] = (state[cfg.field]||0) + cfg.amount;
         showToast(`${cfg.icon} +${cfg.amount} ${labelMap[type]||cfg.label} — thanks for watching!`, 'level');
       } else {
-        showToast(`Ad watched — ${st.p}/${need} toward your next ${labelMap[type]||cfg.label}`, 'level');
+        showToast(`Reward claimed — ${st.p}/${need} toward your next ${labelMap[type]||cfg.label}`, 'level');
       }
     } else {
       state[cfg.field] = (state[cfg.field]||0) + cfg.amount;
@@ -2647,7 +2647,7 @@ function runAnimation(){
     sfxUIClick();
     const success = await requestRewardedAd('unlock_'+itemId);
     if(!success){
-      showToast('Ad was skipped or failed to load — item not unlocked.', 'penalty');
+      showToast('Reward claim was interrupted — item not unlocked.', 'penalty');
       return;
     }
     if(!state[item.unlockField]) state[item.unlockField]=[];
@@ -2670,7 +2670,7 @@ function runAnimation(){
     sfxUIClick();
     const success = await requestRewardedAd('progress_'+itemId);
     if(!success){
-      showToast('Ad was skipped or failed to load — progress not counted.', 'penalty');
+      showToast('Reward claim was interrupted — progress not counted.', 'penalty');
       return;
     }
     const newCount = current+1;
@@ -2680,7 +2680,7 @@ function runAnimation(){
       state[item.unlockField].push(item.id);
       showToast(`Unlocked: ${item.name}!`, 'shop');
     } else {
-      showToast(`Ad watched — ${newCount}/${item.adUnlockCount} toward ${item.name}`, 'level');
+      showToast(`Reward claimed — ${newCount}/${item.adUnlockCount} toward ${item.name}`, 'level');
     }
     saveState();
     renderShop();
@@ -4286,12 +4286,12 @@ function runAnimation(){
       document.getElementById('shopResetRareRow').classList.add('hidden');
       const unlockItems = SHOP_ITEMS.filter(i=>i.adOnly && !isItemOwned(i));
       const unlockHtml = unlockItems.length ? (
-        `<div class="panel-title" style="margin:4px 0 8px;">UNLOCK BY WATCHING AN AD</div>` +
+        `<div class="panel-title" style="margin:4px 0 8px;">UNLOCK FOR FREE</div>` +
         unlockItems.map(item=>{
           return `<div class="ad-item">`+
             `<div class="ad-icon">${item.icon}</div>`+
             `<div class="ad-body"><div class="ad-title">${item.name}</div><div class="ad-desc">${item.desc}</div></div>`+
-            `<button class="ad-watch-btn" data-watch-unlock="${item.id}">Watch Ad</button>`+
+            `<button class="ad-watch-btn" data-watch-unlock="${item.id}">Claim Reward</button>`+
           `</div>`;
         }).join('') + `<div style="height:6px;"></div>`
       ) : '';
@@ -4300,14 +4300,14 @@ function runAnimation(){
       const progressHtml = progressItems.length ? (
         progressCounts.map(cnt=>{
           const itemsForCount = progressItems.filter(i=>i.adUnlockCount===cnt);
-          return `<div class="panel-title" style="margin:4px 0 8px;">UNLOCK BY WATCHING ${cnt} ADS</div>` +
+          return `<div class="panel-title" style="margin:4px 0 8px;">UNLOCK BY CLAIMING ${cnt} REWARDS</div>` +
             itemsForCount.map(item=>{
               const done = (state.adUnlockProgress&&state.adUnlockProgress[item.id])||0;
               return `<div class="ad-item">`+
                 `<div class="ad-icon">${item.icon}</div>`+
                 `<div class="ad-body"><div class="ad-title">${item.name}</div><div class="ad-desc">${item.desc}</div>`+
-                `<div class="ad-left">${done}/${item.adUnlockCount} ads watched</div></div>`+
-                `<button class="ad-watch-btn" data-watch-progress="${item.id}">Watch Ad</button>`+
+                `<div class="ad-left">${done}/${item.adUnlockCount} rewards claimed</div></div>`+
+                `<button class="ad-watch-btn" data-watch-progress="${item.id}">Claim Reward</button>`+
               `</div>`;
             }).join('');
         }).join('') + `<div style="height:6px;"></div>`
@@ -4315,19 +4315,19 @@ function runAnimation(){
       document.getElementById('shopItemsList').innerHTML =
         unlockHtml + progressHtml +
         `<div class="panel-title" style="margin:4px 0 8px;">DAILY BONUSES</div>` +
-        `<div class="ad-note">Watch a short ad to earn a small bonus. Each reward has its own daily limit, which resets with your daily quest cycle.</div>` +
+        `<div class="ad-note">Claim a small free bonus. Each reward has its own daily limit, which resets with your daily quest cycle.</div>` +
         Object.keys(AD_REWARDS).map(type=>{
           const cfg = AD_REWARDS[type];
           const limit = cfg.dailyLimit||AD_DAILY_LIMIT;
           const left = adWatchesLeft(type);
           const disabled = left<=0;
           const need = cfg.adsPerReward||1;
-          const progressLine = need>1 ? `<div class="ad-left">${(adWatchState(type).p||0)}/${need} ads toward next reward · ${left}/${limit} left today</div>` : `<div class="ad-left">${left}/${limit} left today</div>`;
+          const progressLine = need>1 ? `<div class="ad-left">${(adWatchState(type).p||0)}/${need} claims toward next reward · ${left}/${limit} left today</div>` : `<div class="ad-left">${left}/${limit} left today</div>`;
           return `<div class="ad-item">`+
             `<div class="ad-icon">${cfg.icon}</div>`+
             `<div class="ad-body"><div class="ad-title">${cfg.label}</div><div class="ad-desc">${cfg.desc}</div>`+
             progressLine+`</div>`+
-            `<button class="ad-watch-btn" data-watch-ad="${type}" ${disabled?'disabled':''}>${disabled?'Come back later':'Watch Ad'}</button>`+
+            `<button class="ad-watch-btn" data-watch-ad="${type}" ${disabled?'disabled':''}>${disabled?'Come back later':'Claim Reward'}</button>`+
           `</div>`;
         }).join('');
       document.querySelectorAll('#shopItemsList [data-watch-ad]').forEach(btn=>{
@@ -4390,7 +4390,7 @@ function runAnimation(){
           buyHtml = `<button class="shop-buy-btn owned-tag" disabled>✓ Owned</button>`;
         }
       } else if(item.adOnly || item.adUnlockCount){
-        buyHtml = `<button class="shop-buy-btn ad-goto-btn" data-goto-free="${item.id}">Watch Ad</button>`;
+        buyHtml = `<button class="shop-buy-btn ad-goto-btn" data-goto-free="${item.id}">Claim Reward</button>`;
       } else if(locked){
         buyHtml = `<div class="shop-lock-tag">🔒 Lv.${item.requiresLevel} required</div>`;
       } else {
@@ -4435,7 +4435,7 @@ function runAnimation(){
       btn.addEventListener('click', ()=>{
         sfxUIClick();
         setShopTab('free');
-        showToast('Watch an ad below to unlock this item', 'level');
+        showToast('Claim the free reward below to unlock this item', 'level');
       });
     });
   }
@@ -4821,7 +4821,7 @@ function runAnimation(){
       text:'There\'s also a free way to earn currency — tap the Free tab to see it.' },
     { target:'shopTabFree', advanceOn:'manual', overlayTop:true, buttonLabel:'Finish',
       title:'Free Rewards',
-      text:'The Free tab lets you watch a short ad to earn Mana Shards, Dimensional Cores, or make progress toward ad-only unlocks — a way to earn shop currency without spending real money.' }
+      text:'The Free tab lets you claim free rewards to earn Mana Shards, Dimensional Cores, or make progress toward free unlocks — a way to earn shop currency without spending real money.' }
   ];
   let tourActive = false;
   let tourIdx = 0;
